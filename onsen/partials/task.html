@@ -1,0 +1,80 @@
+<ons-page class="center" ng-controller="TaskItemController" ng-init="init()">
+
+    <div class="topcoat-list">
+        <ul class="topcoat-list__container">
+            <li class="topcoat-list__item">
+                <label class="topcoat-switch" style="float:right;margin-right:8px">
+                    <input type="checkbox" class="topcoat-switch__input">
+
+                    <div class="topcoat-switch__toggle">
+
+                    </div>
+                </label>
+                <span class="topcoat-list__item__line-height">Label</span>
+            </li>
+            <li class="topcoat-list__item">
+                <label class="topcoat-switch" style="float:right;margin-right:8px">
+                    <input type="checkbox" class="topcoat-switch__input" checked="">
+
+                    <div class="topcoat-switch__toggle"></div>
+                </label>
+                <span class="topcoat-list__item__line-height">Label</span>
+            </li>
+            <li class="topcoat-list__item topcoat-list__item__line-height">Label</li>
+            <li class="topcoat-list__item topcoat-list__item__line-height">Label</li>
+
+            <li class="topcoat-list__item"><label class="topcoat-radio-button" style="float:right; margin-right:8px;">
+                <input type="radio" name="example" checked="checked">
+
+                <div class="topcoat-radio-button__checkmark"></div>
+            </label> <span class="topcoat-list__item__line-height">Label</span></li>
+
+            <input type="search" value="" placeholder="Search" class="topcoat-search-input">
+
+            <div style="padding:4px"><input type="search" value="" placeholder="Search" class="topcoat-search-input">
+            </div>
+
+            <div style="padding:8px"><input type="range" class="topcoat-range" style="width:100%" value="0"></div>
+
+            <li class="topcoat-list__item"><label class="topcoat-radio-button" style="float:right; margin-right:8px;">
+                <input type="radio" name="example" checked="checked">
+
+                <div class="topcoat-radio-button__checkmark"></div>
+            </label> <span class="topcoat-list__item__line-height">Label</span></li>
+
+
+            <li class="topcoat-list__item">
+                <input type="month"
+                       class="topcoat-text-input--transparent"
+                       placeholder="text"
+                       style="width:100%;margin-top:4px">
+            </li>
+
+
+            <li class="topcoat-list__item">
+                <input type="time"
+                       class="topcoat-text-input--transparent"
+                       placeholder="text"
+                       style="width:100%;margin-top:4px">
+            </li>
+
+
+            <li class="topcoat-list__item">
+                <input type="date"
+                       class="topcoat-text-input--transparent"
+                       placeholder="text"
+                       style="width:100%;margin-top:4px">
+            </li>
+
+
+        </ul>
+    </div>
+
+
+
+    <ons-button
+        type="cta-large"
+        style="display: block; width: 100%; margin-top: 8px;">
+        Submit
+    </ons-button>
+</ons-page>

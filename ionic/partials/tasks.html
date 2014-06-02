@@ -1,0 +1,25 @@
+<ion-view title="Task List" ng-init="init()">
+
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-nav-buttons side="right">
+    <button class="button button-icon icon ion-ios7-more" ng-click="$broadcast('populateDatabase')"></button>
+  </ion-nav-buttons>
+
+  <ion-content class="has-header">
+
+    <ion-list>
+      <ion-item collection-repeat="task in tasks"
+                collection-item-width="'100%'"
+                collection-item-height="50"
+                href="#/app/tasks/{{task._id}}">
+        <div class="stripe" style="background-color: {{task.priority | color}}"></div>
+        {{task.name}}
+        {{task.priority | priority}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+</ion-view>

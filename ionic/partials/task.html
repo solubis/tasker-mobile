@@ -1,0 +1,61 @@
+<ion-view title="Task">
+
+  <ion-content class="has-header">
+
+    <form name="taskForm" ng-submit="save(task)">
+
+      <ul class="list">
+
+        <li class="item item-checkbox">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="task.complete">
+          </label>
+          Complete
+        </li>
+
+        <li class="item item-input">
+          <input type="text" name="name" placeholder="Name" ng-model="task.name" required>
+        </li>
+
+        <li ng-show="taskForm.name.$dirty && taskForm.name.$invalid" class="item error">
+          <span ng-show="taskForm.name.$error.required">Name is required</span>
+        </li>
+
+        <li class="item item-input">
+          <textarea placeholder="Description" ng-model="task.description"></textarea>
+        </li>
+
+        <li class="item item-input">
+          <input type="date" value="2012-03-22"/>
+        </li>
+
+        <li class="item item-input item-select">
+          <div class="input-label">
+            Project
+          </div>
+          <select>
+            <option>Private</option>
+            <option selected>Inbox</option>
+            <option>Other</option>
+          </select>
+        </li>
+
+        <li class="item item-input item-select">
+          <div class="input-label">
+            Priority
+          </div>
+          <select>
+            <option ng-repeat="item in priorities">{{item}}</option>
+          </select>
+        </li>
+
+      </ul>
+
+      <div class="padding">
+        <button class="button button-block button-positive" ng-disabled="taskForm.$invalid" >Submit</button>
+      </div>
+
+    </form>
+
+  </ion-content>
+</ion-view>

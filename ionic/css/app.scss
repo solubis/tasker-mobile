@@ -1,0 +1,27 @@
+$ionicons-font-path: "../../lib/ionic/release/fonts";
+$font-family-base:  "Helvetica Neue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
+$nav-title-slide-ios7-delay: 250ms;
+
+@import "../../lib/ionic/scss/ionic.scss";
+
+ion-item {
+  left: 0;
+  right: 0;
+
+  .stripe {
+    position: absolute;
+    top: 0em;
+    left: 0em;
+    z-index: 10;
+    width: 0.5rem;
+    height: 100%;
+  }
+}
+
+.error {
+  height: 24px;
+  background-color: red;
+  color: white;
+  font-size: 13px;
+  padding: 2px 0px 2px 10px;
+}

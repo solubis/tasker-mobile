@@ -1,0 +1,111 @@
+<div class="navbar-inner" id="taskFormNavbar">
+  <div class="left"><a href="#" class="back link"><i class="icon icon-back-blue"></i><span>Back</span></a></div>
+  <div class="center sliding">Task</div>
+  <div class="right"><a href="#" class="link" ng-click="update()"><span>Done</span></a></div>
+</div>
+
+<div data-page="task-form" class="page">
+  <div class="page-content">
+    <div class="content-block-title">Task definition</div>
+    <div class="list-block">
+      <ul>
+
+        <li class="align-top">
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-input">
+                <textarea placeholder="Task name" ng-model="formData.name"></textarea>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <a href="#" class="item-link smart-select">
+            <select name="fruits">
+              <option value="apple" selected="selected">Project 1</option>
+              <option value="pineapple">Project 2</option>
+              <option value="pear">Private</option>
+              <option value="orange">Other</option>
+            </select>
+
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Tags</div>
+              </div>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Finish Date</div>
+              <div class="item-input">
+                <input type="date" ng-model="formData.date">
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title label">Start Date</div>
+              <div class="item-input">
+                <input type="date" ng-model="formData.date">
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <a href="#" class="item-link smart-select">
+            <select name="fruits">
+              <option value="apple" selected="selected">Every day</option>
+              <option value="pineapple">Every second day</option>
+              <option value="pear">Once a week</option>
+              <option value="orange">Once a month</option>
+            </select>
+
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Repeat</div>
+                <div class="item-after">None</div>
+              </div>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="item-link smart-select">
+            <select name="priorities"
+                    ng-model="formData.priority"
+                    ng-options="priority.value as priority.name for priority in priorities">
+            </select>
+
+            <div class="item-content">
+              <div class="item-inner">
+                <div class="item-title">Priority</div>
+                <div class="item-after">{{formData.priority | priority}}</div>
+              </div>
+            </div>
+          </a>
+        </li>
+
+
+        <li class="align-top">
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-input">
+                <textarea ng-model="formData.description" placeholder="Notes"></textarea>
+              </div>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+</div>

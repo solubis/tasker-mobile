@@ -1,0 +1,19 @@
+{
+  "name": "todos",
+  "version": "1.0.0",
+  "directory" : "lib",
+  "dependencies": {
+    "angular":"~1.3",
+    "chance": "*",
+    "pouchdb": "*",
+    "q": "*",
+    "jasmine": "*",
+    "onsenui":"*",
+    "ionic":"~1.0.0",
+    "framework7": "*"
+  },
+  "devDependencies": {
+    "angular-mocks": "*",
+    "angular-scenario": "*"
+  }
+}

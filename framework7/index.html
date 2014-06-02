@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <title>My App</title>
+
+  <link rel="stylesheet" href="../lib/framework7/dist/css/framework7.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+
+<!--------------------  Status Bar Overlay  -------------------->
+
+<div class="statusbar-overlay"></div>
+
+<!--------------------  Panels Overlay  -------------------->
+
+<div class="panel-overlay"></div>
+
+
+<!--------------------  Side Drawer Menu  -------------------->
+
+
+<div class="panel panel-left panel-reveal">
+
+  <div class="content-block-title" style="color:white">Left Panel</div>
+  <div class="content-block">
+    <p>This is a side panel. You can close it by clicking outsite or on this link: <a href="#" class="close-panel">close
+      me</a></p>
+  </div>
+  <div class="content-block-title">Framework7 Kitchen Sink</div>
+  <div class="list-block">
+    <ul>
+      <li>
+        <a href="#" navigate-to-page="taskList" class="close-panel item-link">
+          <div class="item-content">
+            <div class="item-media"><i class="icon icon-f7"></i></div>
+            <div class="item-inner">
+              <div class="item-title">Tasks</div>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+
+    <ul>
+      <li>
+        <a href="#" navigate-to-page="test" class="close-panel item-link">
+          <div class="item-content">
+            <div class="item-media"><i class="icon icon-f7"></i></div>
+            <div class="item-inner">
+              <div class="item-title">Test</div>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="content-block">
+    <p>Long text block goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+  </div>
+
+</div>
+
+<!--------------------  Popover  -------------------->
+
+<div class="popover popover-menu" style="width: 100px">
+  <div class="popover-angle on-top"></div>
+  <div class="popover-inner">
+    <div class="list-block">
+      <ul>
+        <li><a href="#" class="list-button item-link">One</a></li>
+        <li><a href="#" class="list-button item-link">Two</a></li>
+        <li><a href="#" class="list-button item-link">Three</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--------------------  Views  -------------------->
+
+<div class="views toolbar-through tabs">
+
+  <!--------------------  Tasks View  -------------------->
+
+  <div id="tasksView" class="view view-main tab active" dynamic-navbar="true" start-page="taskList" >
+
+    <div class="navbar"></div>
+    <div class="pages navbar-through"></div>
+
+  </div>
+
+  <div id="notificationView" class="view tab" dynamic-navbar="true" start-page="test" >
+
+    <div class="navbar"></div>
+    <div class="pages navbar-through"></div>
+
+  </div>
+
+  <div class="toolbar tabbar tabbar-labels">
+    <div class="toolbar-inner">
+      <a href="#tasksView"  class="tab-link active">
+        <span class="tabbar-label">Label 1</span>
+      </a>
+      <a href="#notificationView"  class="tab-link">
+        <span class="tabbar-label">Label 2</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!--------------------  Scripts  -------------------->
+
+<script src="../lib/angular/angular.js"></script>
+<script src="../lib/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="../lib/chance/chance.js"></script>
+<script src="../lib/pouchdb/dist/pouchdb-nightly.js"></script>
+
+<script src="../common/js/filters.js"></script>
+<script src="../common/js/pouchdb.js"></script>
+<script src="../common/js/services.js"></script>
+
+<script src="../lib/framework7/dist/js/framework7.js"></script>
+<script src="js/framework7-ext.js"></script>
+
+<script src="js/tasks.js"></script>
+<script src="js/app.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+.panel {
+    background: #222;
+    color: #dddddd;
+}
+
+.panel-left .list-block a {
+    color: inherit;
+}
+
+.panel-left .list-block ul {
+    background: none;
+}
+
+.panel-left .list-block ul, .panel-left .list-block .item-inner {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.list-block textarea {
+    padding-top: 8px;
+    padding-left: 0px;
+    height: 5em;
+}
+
+.stripe {
+    position: absolute;
+    top: 0em;
+    left: 0em;
+    z-index: 10;
+    width: 0.5rem;
+    height: 100%;
+}
+
+.item-inner.completed  {
+    text-decoration: line-through;
+}
+
+.item-inner .item-title-row {
+    background-color: inherit;
+}

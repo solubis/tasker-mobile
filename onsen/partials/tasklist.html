@@ -1,0 +1,18 @@
+<ons-screen ng-controller="TaskListController" ng-init="init()">
+    <ons-navigator title="List"
+                   right-button-icon="fa fa-lg fa-refresh"
+                   on-right-button-click="$emit('populateDatabase')"
+                   left-button-icon="fa fa-lg fa-bars"
+                   on-left-button-click="ons.slidingMenu.toggleMenu()">
+        <ons-list>
+            <ons-list-item class="topcoat-list__item__line-height"
+                           ng-repeat="task in tasks"
+                           ng-click="ons.navigator.pushPage('partials/task.html', task)"
+                           >
+
+                {{task.name}}
+
+            </ons-list-item>
+        </ons-list>
+    </ons-navigator>
+</ons-screen>
