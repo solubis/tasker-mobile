@@ -6,27 +6,23 @@ angular.module('app', [
   'framework7'
 ])
 
-    .run(function ($rootScope, $navigator, $app) {
+    .run(function ($rootScope, $navigator, $app, $timeout) {
       console.log('Run');
-
     })
 
     .config(function ($navigatorProvider) {
 
       console.log('Config');
 
-      $navigatorProvider.page('taskForm', {
-        controller: 'TaskFormController',
-        templateUrl: 'partials/task-form.html'
+      $navigatorProvider.page('task-form', {
+        controller: 'TaskFormController'
       });
 
-      $navigatorProvider.page('taskList', {
-        controller: 'TaskListController',
-        templateUrl: 'partials/task-list.html'
+      $navigatorProvider.page('task-list', {
+        controller: 'TaskListController'
       });
 
-      $navigatorProvider.page('test', {
-        templateUrl: 'partials/test.html',
+      $navigatorProvider.page('notifications', {
         resolve: {
           message: function () {
             return 'Hello!';

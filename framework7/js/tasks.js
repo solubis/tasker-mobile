@@ -148,7 +148,7 @@ angular.module('app.tasks', ['app.pouchdb'])
 
     })
 
-    .controller('TaskFormController', function ($scope, $db, $filter, $app, $navigator, $dictionary) {
+    .controller('TaskFormController', function ($scope, $db, $navigator, $dictionary) {
 
       $scope.formData = angular.copy($scope.task);
 
@@ -156,7 +156,7 @@ angular.module('app.tasks', ['app.pouchdb'])
         $scope.task.done = !$scope.task.done;
       };
 
-      $scope.update = function (event) {
+      $scope.update = function () {
         angular.copy($scope.formData, $scope.task);
         $navigator.goBack();
 
