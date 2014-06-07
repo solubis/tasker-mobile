@@ -1,6 +1,6 @@
 <div class="navbar-inner" >
   <div class="left"><a href="#" class="back link"><i class="icon icon-back-blue"></i><span>Back</span></a></div>
-  <div class="center sliding">Task [{{task.name}}]</div>
+  <div class="center sliding">Task</div>
   <div class="right"><a href="#" class="link" ng-click="update()"><span>Done</span></a></div>
 </div>
 
@@ -31,7 +31,7 @@
 
             <div class="item-content">
               <div class="item-inner">
-                <div class="item-title">Tags</div>
+                <div class="item-title">Project</div>
               </div>
             </div>
           </a>
@@ -40,18 +40,7 @@
         <li>
           <div class="item-content">
             <div class="item-inner">
-              <div class="item-title label">Finish Date</div>
-              <div class="item-input">
-                <input type="date" ng-model="formData.date">
-              </div>
-            </div>
-          </div>
-        </li>
-
-        <li>
-          <div class="item-content">
-            <div class="item-inner">
-              <div class="item-title label">Start Date</div>
+              <div class="item-title label">Date</div>
               <div class="item-input">
                 <input type="date" ng-model="formData.date">
               </div>
@@ -105,7 +94,22 @@
         </li>
 
       </ul>
+
+
     </div>
+
+    <div class="content-block row">
+      <div class="col-50 ">
+        <a href="#" ng-click="remove(task)" class="button button-big button-cancel">Delete</a>
+      </div>
+      <div class="col-50" ng-if="!formData.completed">
+        <a href="#" ng-click="complete(task)" class="button button-big button-submit">Complete</a>
+      </div>
+      <div class="col-50" ng-if="formData.completed">
+        <a href="#" ng-click="complete(task)" class="button button-big button-submit">Activate</a>
+      </div>
+    </div>
+
   </div>
 
 </div>

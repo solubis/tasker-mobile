@@ -1,8 +1,6 @@
-'use strict';
-
 angular.module('app.tasks', ['app.pouchdb'])
 
-    .controller('TaskListController', function ($scope, $filter, $db, $app, $dictionary) {
+    .controller('TaskListController', function ($scope, $filter, $db, $app, $timeout) {
 
       $scope.order = '+date';
       $scope.period = 'all';
@@ -14,7 +12,7 @@ angular.module('app.tasks', ['app.pouchdb'])
         console.log('TaskListController Initializing...');
         $db.all()
             .then(function (result) {
-              $scope.tasks = $scope.original = result;
+              $scope.tasks = result;
             })
             .
             catch(function (error) {
@@ -35,7 +33,7 @@ angular.module('app.tasks', ['app.pouchdb'])
                 text: 'Activate',
                 red: true,
                 onClick: function () {
-                  $scope.$apply(function(){
+                  $scope.$apply(function () {
                     $scope.complete(task);
                   });
                   $app.swipeoutClose($app.swipeoutOpenedEl);
@@ -62,7 +60,7 @@ angular.module('app.tasks', ['app.pouchdb'])
                 text: 'Complete',
                 red: true,
                 onClick: function () {
-                  $scope.$apply(function(){
+                  $scope.$apply(function () {
                     $scope.complete(task);
                   });
                   $app.swipeoutClose($app.swipeoutOpenedEl);
@@ -99,13 +97,17 @@ angular.module('app.tasks', ['app.pouchdb'])
             });
       };
 
-      $scope.remove = function (task, index) {
+      $scope.remove = function (task) {
         $db.remove(task)
             .then(function () {
-              $scope.tasks.splice(index, 1);
+              $timeout(function () {
+                $scope.tasks.splice($scope.tasks.indexOf(task), 1);
+              }, 100); // najpierw swipe-to-delete musi zadziałać
             })
             .catch(function (error) {
-              console.log('Error (' + error.name + ') : ' + error.message);
+              var message = 'Error (' + error.name + ') : ' + error.message;
+              console.log(message);
+              $app.alert(message);
             });
       };
 
@@ -114,15 +116,14 @@ angular.module('app.tasks', ['app.pouchdb'])
       };
 
       $scope.populate = function () {
-        $db.clean()
+        return $db.clean()
             .then(function () {
               return $db.populate();
             })
             .then(function (result) {
               $scope.tasks = result;
             })
-            .
-            catch(function (error) {
+            .catch(function (error) {
               console.log('Error (' + error.name + ') : ' + error.message);
             });
       };
@@ -130,7 +131,9 @@ angular.module('app.tasks', ['app.pouchdb'])
       // UI actions event handling
 
       $scope.$on('addItem', $scope.create);
+
       $scope.$on('populateDatabase', $scope.populate);
+
       $scope.$on('changeOrder', function (value) {
         $scope.order = value;
 
@@ -140,30 +143,36 @@ angular.module('app.tasks', ['app.pouchdb'])
           $scope.group = null;
         }
       });
+
       $scope.$on('changePeriod', function setFilter(value) {
         $scope.period = value;
       });
 
       $scope.init();
-
     })
 
-    .controller('TaskFormController', function ($scope, $db, $navigator, $dictionary) {
+    .controller('TaskFormController', function ($scope, $db, $app, $navigator, $dictionary) {
 
       $scope.formData = angular.copy($scope.task);
 
-      $scope.complete = function () {
-        $scope.task.done = !$scope.task.done;
+      $scope.remove = function (task) {
+        $app.confirm('TaskFormController', 'Delete task?', function () {
+          $scope.$parent.remove(task);
+          $navigator.goBack();
+        });
+      };
+
+      $scope.complete = function (task) {
+        $scope.$parent.complete(task);
+        $navigator.goBack();
       };
 
       $scope.update = function () {
+        console.log('scope', $scope.$id);
         angular.copy($scope.formData, $scope.task);
         $navigator.goBack();
 
         $db.update($scope.task)
-            .then(function () {
-
-            })
             .catch(function (error) {
               console.log('Error (' + error.name + ') : ' + error.message);
             });

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <link rel="stylesheet" href="lib/framework7/dist/css/framework7.css">
+
+  <title>My App</title>
+
+</head>
+
+<body ng-controller="AppController">
+
+<div class="views">
+  <div class="pages">
+    <div class="page">
+      <div class="page-content">
+        <div class="list-block">
+          <ul>
+            <li>
+              <div class="item-content">
+                <div class="item-inner">
+                  <div class="item-title label">Finish Date</div>
+                  <div class="item-input">
+                    <input type="date" ng-model="date">
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--------------------  Scripts  -------------------->
+<script src="lib/framework7/dist/js/framework7.js"></script>
+<script src="lib/angular/angular.js"></script>
+
+<script>
+  var app = angular.module('app', []);
+
+  app.controller('AppController', function ($scope) {
+    $scope.date = new Date(2013, 12, 12);
+    console.log('');
+  });
+
+  app = new Framework7({
+    ajaxLinks: false,
+    init: true,
+    onAjaxStart: function () {
+      app.showIndicator();
+    },
+    onAjaxComplete: function () {
+      app.hideIndicator();
+    }
+  });
+</script>
+
+</body>
+</html>

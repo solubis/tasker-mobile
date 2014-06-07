@@ -7,13 +7,23 @@ angular.module('app.pouchdb', [])
 
       var Database = function (databaseName) {
         _databaseName = databaseName;
-        _db = new PouchDB(_databaseName);
+        _db = new PouchDB(_databaseName, {adapter: 'websql'});
       };
+
+      function convert(record) {
+        for (var field in record) {
+          if (record.hasOwnProperty(field) && field.indexOf('date') >= 0) {
+            record.date = new Date(record.date);
+          }
+        }
+
+        return record;
+      }
 
       Database.prototype.clean = function () {
         return $q.when(PouchDB.destroy(_databaseName))
             .then(function () {
-              _db = new PouchDB(_databaseName);
+              _db = new PouchDB(_databaseName, {adapter: 'websql'});
             })
       };
 
@@ -27,7 +37,7 @@ angular.module('app.pouchdb', [])
               var converted;
 
               converted = result.rows.map(function (element) {
-                return element.doc;
+                return convert(element.doc);
               });
 
               return converted;
@@ -37,13 +47,18 @@ angular.module('app.pouchdb', [])
       Database.prototype.get = function (obj) {
         var _id = (typeof obj === 'object' ? obj.id : obj);
 
-        return $q.when(_db.get(_id));
+        return $q.when(_db.get(_id))
+            .then(function (record) {
+              return convert(record);
+            });
       };
 
       Database.prototype.create = function (record) {
+        var me = this;
+
         return $q.when(_db.post(record))
             .then(function (result) {
-              return _db.get(result.id);
+              me.get(result.id);
             });
       };
 

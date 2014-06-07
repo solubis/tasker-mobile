@@ -5,31 +5,10 @@ angular.module('app', [
   'app.pouchdb',
   'framework7'
 ])
-
-    .run(function ($rootScope, $navigator, $app, $timeout) {
-      console.log('Run');
-    })
-
     .config(function ($navigatorProvider) {
-
-      console.log('Config');
-
       $navigatorProvider.page('task-form', {
         controller: 'TaskFormController'
       });
-
-      $navigatorProvider.page('task-list', {
-        controller: 'TaskListController'
-      });
-
-      $navigatorProvider.page('notifications', {
-        resolve: {
-          message: function () {
-            return 'Hello!';
-          }
-        }
-      });
-
     })
 
     .factory('$db', function ($q, Database) {
@@ -43,25 +22,22 @@ angular.module('app', [
               'Responsive tasker - Bootstrap, Everlive, Firebase'
             ],
             promises = [],
-            today = new Date(),
-            date;
+            today = new Date();
 
-        date = chance.date({
-          year: 2014,
-          month: today.getMonth(),
-          hour: 0,
-          minute: 0,
-          second: 0,
-          millisecond: 0,
-          string: false,
-          american: false
-        }).getTime();
-
-        for (i = 0; i < 100; i++) {
+        for (i = 0; i < 20; i++) {
 
           var promise = this.create({
             name: i + ' - ' + chance.pick(tasks),
-            date: date,
+            date: chance.date({
+              year: 2014,
+              month: today.getMonth(),
+              hour: 0,
+              minute: 0,
+              second: 0,
+              millisecond: 0,
+              string: false,
+              american: false
+            }),
             priority: chance.integer({
               min: 0,
               max: 2
