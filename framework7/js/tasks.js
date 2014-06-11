@@ -23,73 +23,62 @@ angular.module('app.tasks', ['app.pouchdb'])
       };
 
       $scope.actions = function (task) {
+        var actions, title, status, cancel, tomorrow;
+
+        title = {
+          text: 'What would you like to do with this task?',
+          label: true
+        };
+
+        status = {
+          red: true,
+          onClick: function () {
+            $scope.$apply(function () {
+              $scope.complete(task);
+            });
+            $app.swipeoutClose($app.swipeoutOpenedEl);
+          }
+        };
+
+        tomorrow = {
+          text: 'Do it tomorrow',
+          onClick: function () {
+            $scope.$apply(function () {
+              task.date.setDate(task.date.getDate() + 1);
+            });
+            $app.swipeoutClose($app.swipeoutOpenedEl);
+          }
+        };
+
+        cancel = {
+          text: 'Cancel',
+          bold: true,
+          onClick: function () {
+            $app.swipeoutClose($app.swipeoutOpenedEl);
+          }
+        };
+
         if (task.completed) {
+          status.text = 'Activate';
           $app.actions([
             [
-              // Group Label
-              {
-                text: 'What would you like to do with this task?',
-                label: true
-              },
-              {
-                text: 'Activate',
-                red: true,
-                onClick: function () {
-                  $scope.$apply(function () {
-                    $scope.complete(task);
-                  });
-                  $app.swipeoutClose($app.swipeoutOpenedEl);
-                }
-              }
+              title,
+              status
             ],
-            // Cancel group
             [
-              {
-                text: 'Cancel',
-                bold: true,
-                onClick: function () {
-                  $app.swipeoutClose($app.swipeoutOpenedEl);
-                }
-              }
+              cancel
             ]
           ]);
         } else {
+          status.text = 'Complete';
           $app.actions([
             [
-              // Group Label
-              {
-                text: 'What would you like to do with this task?',
-                label: true
-              },
-              {
-                text: 'Complete',
-                red: true,
-                onClick: function () {
-                  $scope.$apply(function () {
-                    $scope.complete(task);
-                  });
-                  $app.swipeoutClose($app.swipeoutOpenedEl);
-                }
-              },
-              {
-                text: 'Do it tomorrow',
-                onClick: function () {
-                  $scope.$apply(function () {
-                    task.date.setDate(task.date.getDate() + 1);
-                  });
-                  $app.swipeoutClose($app.swipeoutOpenedEl);
-                }
-              }
+              title,
+              status,
+              tomorrow
             ],
-            // Second group
             [
-              {
-                text: 'Cancel',
-                bold: true,
-                onClick: function () {
-                  $app.swipeoutClose($app.swipeoutOpenedEl);
-                }
-              }
+              cancel
             ]
           ]);
         }
@@ -129,7 +118,7 @@ angular.module('app.tasks', ['app.pouchdb'])
 
       $scope.refresh = $scope.populate;
 
-      $scope.$on('changeOrder', function(event, value){
+      $scope.$on('changeOrder', function (event, value) {
         $scope.changeOrder(value);
       });
 
