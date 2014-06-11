@@ -11,6 +11,23 @@
 
   <link rel="stylesheet" href="../lib/framework7/dist/css/framework7.css">
   <link rel="stylesheet" href="css/app.css">
+
+  <!-- Favicon-->
+  <link href="../common/img/icon-57.png" rel="shortcut icon">
+  <!-- iOS 7 iPad (retina) -->
+  <link href="../common/img/icon-152.png" sizes="152x152" rel="apple-touch-icon">
+  <!-- iOS 6 iPad (retina) -->
+  <link href="../common/img/icon-144.png" sizes="144x144" rel="apple-touch-icon">
+  <!-- iOS 7 iPhone (retina) -->
+  <link href="../common/img/icon-120.png" sizes="120x120" rel="apple-touch-icon">
+  <!-- iOS 6 iPhone (retina) -->
+  <link href="../common/img/icon-114.png" sizes="114x114" rel="apple-touch-icon">
+  <!-- iOS 7 iPad -->
+  <link href="../common/img/icon-76.png" sizes="76x76" rel="apple-touch-icon">
+  <!-- iOS 6 iPad -->
+  <link href="../common/img/icon-72.png" sizes="72x72" rel="apple-touch-icon">
+  <!-- iOS 6 iPhone -->
+  <link href="../common/img/icon-57.png" sizes="57x57" rel="apple-touch-icon">
 </head>
 
 <body>
@@ -70,11 +87,11 @@
 
 <!--------------------  Views  -------------------->
 
-<div class="views toolbar-through tabs">
+<div class="views tabs">
 
   <!--------------------  Tasks View  -------------------->
 
-  <div id="tasks-view" class="view view-main tab active" ng-controller="TaskListController" >
+  <div id="tasks-view" class="view view-main tab active" ng-controller="TaskListController">
 
     <div class="navbar">
       <div class="navbar-inner">
@@ -83,27 +100,42 @@
             <i class="icon icon-bars-blue"></i>
           </a>
         </div>
-        <div class="center sliding">Tasks [{{tasks.length}}]</div>
+        <div class="center buttons-row" on-change="changePeriod(index)">
+          <a href="#" class="button">Today</a>
+          <a href="#" class="button">Week</a>
+          <a href="#" class="button active">All</a>
+        </div>
         <div class="right">
-          <a href="#" class="link" ng-click="populate()">Populate</a>
+          <a href="partials/task-form.html" class="link icon-only" ng-click="">
+            <i class="icon icon-plus">+</i>
+          </a>
         </div>
       </div>
     </div>
 
     <div class="pages navbar-through">
-      <div data-page="task-list" class="page" >
+      <div data-page="task-list" class="page">
 
-        <div class="page-content  ">
+        <div class="page-content pull-to-refresh-content">
 
           <div class="pull-to-refresh-layer">
             <div class="preloader"></div>
             <div class="pull-to-refresh-arrow"></div>
           </div>
 
-          <div class="list-block media-list sortable">
+          <div ng-show="filteredTasks.length<=0" class="content-block-title">Task list</div>
+          <div ng-show="filteredTasks.length<=0" class="content-block">
+            <div class="content-block-inner">
+              <p>Total elements : {{ tasks.length}}, visible elements : {{filteredTasks.length}}</p>
+
+              <p>To populate database just swipe down to refresh list and/or change filter.</p>
+            </div>
+          </div>
+
+          <div class="list-block media-list sortable" ng-show="filteredTasks.length>0">
             <ul>
 
-              <li ng-repeat="task in tasks | dateUntil: period | orderBy: order | groupBy: group track by task._id "
+              <li ng-repeat="task in filteredTasks = (tasks | dateUntil: period | orderBy: order | groupBy: group) track by task._id "
                   class="swipeout">
 
                 <div ng-if="task.groupHeader" class="list-group-title">{{task.groupHeader}}</div>
@@ -118,8 +150,7 @@
                       <div class="item-after">{{task.date | date:'MMM d, y'}}</div>
                     </div>
                     <div class="item-subtitle">
-                      Worked : {{ task.worked }} hours, to complete: {{task.toComplete}}, isCompleted:
-                      {{task.completed}}
+
                     </div>
                     <div class="item-text">{{task.description}}</div>
                   </div>
@@ -142,12 +173,19 @@
 
             </ul>
 
-            <div class="list-block-label">
-              <p>Task list : {{ tasks.length}}</p>
-            </div>
 
           </div>
         </div>
+
+
+        <div class="toolbar">
+          <div class="toolbar-inner">
+            <a href="#" data-popover=".popover-links" class="link open-popover">Sort</a>
+          </div>
+        </div>
+
+
+
       </div>
     </div>
 
@@ -175,6 +213,20 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<div class="popover popover-links">
+  <div class="popover-angle on-bottom"></div>
+  <div class="popover-inner">
+    <div class="list-block">
+      <ul>
+        <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+name')">Sort by name</a></li>
+        <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+date')">Sort by date</a></li>
+        <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+priority')">Sort by priority</a></li>
+        <li></li>
+      </ul>
+    </div>
   </div>
 </div>
 

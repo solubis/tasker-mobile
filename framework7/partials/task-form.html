@@ -1,40 +1,23 @@
 <div class="navbar-inner" >
-  <div class="left"><a href="#" class="back link"><i class="icon icon-back-blue"></i><span>Back</span></a></div>
+  <div class="left"><a href="#" class="back link"><i class="icon icon-back-blue"></i><span>Cancel</span></a></div>
   <div class="center sliding">Task</div>
-  <div class="right"><a href="#" class="link" ng-click="update()"><span>Done</span></a></div>
+  <div class="right"><a href="#" class="link" ng-click="update()">Save</a></div>
 </div>
 
-<div data-page="task-form" class="page">
+<div data-page="task-form" class="page no-toolbar">
   <div class="page-content">
     <div class="content-block-title">Task definition</div>
-    <div class="list-block">
+    <form name="taskForm" ng-submit="update()" class="list-block" novalidate>
       <ul>
 
         <li class="align-top">
           <div class="item-content">
             <div class="item-inner">
               <div class="item-input">
-                <textarea placeholder="Task name" ng-model="formData.name"></textarea>
+                <textarea placeholder="Task name" name="taskName" ng-model="formData.name" required></textarea>
               </div>
             </div>
           </div>
-        </li>
-
-        <li>
-          <a href="#" class="item-link smart-select">
-            <select name="fruits">
-              <option value="apple" selected="selected">Project 1</option>
-              <option value="pineapple">Project 2</option>
-              <option value="pear">Private</option>
-              <option value="orange">Other</option>
-            </select>
-
-            <div class="item-content">
-              <div class="item-inner">
-                <div class="item-title">Project</div>
-              </div>
-            </div>
-          </a>
         </li>
 
         <li>
@@ -42,7 +25,7 @@
             <div class="item-inner">
               <div class="item-title label">Date</div>
               <div class="item-input">
-                <input type="date" ng-model="formData.date">
+                <input name="date" type="date" ng-model="formData.date">
               </div>
             </div>
           </div>
@@ -50,25 +33,7 @@
 
         <li>
           <a href="#" class="item-link smart-select">
-            <select name="fruits">
-              <option value="apple" selected="selected">Every day</option>
-              <option value="pineapple">Every second day</option>
-              <option value="pear">Once a week</option>
-              <option value="orange">Once a month</option>
-            </select>
-
-            <div class="item-content">
-              <div class="item-inner">
-                <div class="item-title">Repeat</div>
-                <div class="item-after">None</div>
-              </div>
-            </div>
-          </a>
-        </li>
-
-        <li>
-          <a href="#" class="item-link smart-select">
-            <select name="priorities"
+            <select name="priority"
                     ng-model="formData.priority"
                     ng-options="priority.value as priority.name for priority in priorities">
             </select>
@@ -95,17 +60,16 @@
 
       </ul>
 
-
-    </div>
+    </form>
 
     <div class="content-block row">
-      <div class="col-50 ">
+      <div class="col-50" ng-if="!isNew">
         <a href="#" ng-click="remove(task)" class="button button-big button-cancel">Delete</a>
       </div>
-      <div class="col-50" ng-if="!formData.completed">
+      <div class="col-50" ng-if="!formData.completed && !isNew">
         <a href="#" ng-click="complete(task)" class="button button-big button-submit">Complete</a>
       </div>
-      <div class="col-50" ng-if="formData.completed">
+      <div class="col-50" ng-if="formData.completed && !isNew">
         <a href="#" ng-click="complete(task)" class="button button-big button-submit">Activate</a>
       </div>
     </div>

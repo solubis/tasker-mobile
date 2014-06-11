@@ -17,7 +17,7 @@ angular.module('framework7', [])
     .directive('page', function () {
       return {
         restrict: 'C',
-        scope: true,
+        scope: false,
         link: function (scope, element, attrs, ctrl) {
         }
       };
@@ -41,10 +41,48 @@ angular.module('framework7', [])
         },
         link: function (scope, element) {
           element.on('refresh', function () {
-            scope.populate().then(function () {
-              $app.pullToRefreshDone(element);
-            });
+            if (scope.refresh instanceof Function) {
+              scope.refresh()
+                  .then(function () {
+                    $app.pullToRefreshDone(element);
+                  });
+            }
           });
+        }
+      };
+    })
+
+    .directive('buttonsRow', function () {
+      return {
+        restrict: 'C',
+        scope: {
+          onChange: "&"
+        },
+        controller: function ($scope, $element) {
+          var buttons = [];
+
+          buttons = $element.children();
+
+          function activate(button) {
+            angular.forEach(buttons, function (item, index) {
+              var element = angular.element(item);
+              if (item === button) {
+                $scope.$apply(function () {
+                  $scope.onChange({index: index});
+                });
+
+                element.addClass('active');
+              } else {
+                element.removeClass('active');
+              }
+            });
+          }
+
+          angular.forEach(buttons, function (element) {
+            angular.element(element).on('click', function () {
+              activate(this);
+            });
+          })
         }
       };
     })
@@ -68,13 +106,18 @@ angular.module('framework7', [])
             _scope = scope.$new();
           },
           getScope: function () {
-            return _scope;
+            var scope = _scope;
+            _scope = undefined;
+            return scope;
           },
           setView: function (view) {
             _view = view;
           },
           goBack: function () {
             _view.goBack();
+          },
+          loadPage: function (url) {
+            _view.loadPage(url);
           }
         };
 
@@ -83,7 +126,14 @@ angular.module('framework7', [])
     })
 
     .factory('$app', function ($navigator, $compile, $controller, $timeout, $injector) {
-      var app;
+      var app, _navbar, _scopes = {};
+
+      function setNavbar(name, container) {
+        _navbar = {
+          name: name,
+          container: container
+        }
+      }
 
       function compile(pageName, container) {
         var config,
@@ -93,11 +143,12 @@ angular.module('framework7', [])
         config = $navigator.getPageConfig(pageName);
 
         if (!config) {
-          console.log('Skipping compile for page', pageName);
           return;
         }
 
-        scope = $navigator.getScope();
+        container = angular.element(container);
+
+        scope = $navigator.getScope() || container.scope().$new();
 
         controller = config.controller;
 
@@ -105,18 +156,22 @@ angular.module('framework7', [])
           $controller(controller, {$scope: scope});
         }
 
-        container = angular.element(container);
-
         $compile(container)(scope);
 
+        if (_navbar && _navbar.name === pageName) {
+          $compile(_navbar.container)(scope);
+        }
+
         scope.$digest();
+
+        _scopes[pageName] = scope;
       }
 
       Framework7.prototype.plugins.demoPlugin = function (app, params) {
         return {
           hooks: {
             navbarInit: function (navbar, pageData) {
-              compile(pageData.name, navbar.container);
+              setNavbar(pageData.name, navbar.container);
             },
             pageInit: function (pageData) {
               compile(pageData.name, pageData.container);
@@ -127,6 +182,12 @@ angular.module('framework7', [])
             loadPage: function (view, url, content) {
             },
             goBack: function (view, url, preloadOnly) {
+            },
+            pageBeforeRemove: function (pageData) {
+              if (_scopes[pageData.name]) {
+                _scopes[pageData.name].$destroy();
+                delete _scopes[pageData.name];
+              }
             }
           }
         };

@@ -42,18 +42,6 @@ angular.module('app', [
               min: 0,
               max: 2
             }),
-            worked: chance.integer({
-              min: 0,
-              max: 100
-            }),
-            toComplete: chance.integer({
-              min: 0,
-              max: 100
-            }),
-            repeat: chance.integer({
-              min: 0,
-              max: 3
-            }),
             description: chance.sentence({words: 10}),
             completed: chance.bool()
           });
@@ -68,8 +56,8 @@ angular.module('app', [
         name: 'New task',
         date: new Date(),
         priority: 0,
-        worked: 0,
-        toComplete: 0
+        description: '',
+        completed: false
       };
 
       return $db;

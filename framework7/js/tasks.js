@@ -2,6 +2,8 @@ angular.module('app.tasks', ['app.pouchdb'])
 
     .controller('TaskListController', function ($scope, $filter, $db, $app, $timeout) {
 
+      $scope.nameOfScope = 'TaskListController';
+
       $scope.order = '+date';
       $scope.period = 'all';
       $scope.group = 'date';
@@ -44,7 +46,10 @@ angular.module('app.tasks', ['app.pouchdb'])
             [
               {
                 text: 'Cancel',
-                bold: true
+                bold: true,
+                onClick: function () {
+                  $app.swipeoutClose($app.swipeoutOpenedEl);
+                }
               }
             ]
           ]);
@@ -69,7 +74,10 @@ angular.module('app.tasks', ['app.pouchdb'])
               {
                 text: 'Do it tomorrow',
                 onClick: function () {
-                  task.date.setDate(task.date.getDate() + 1);
+                  $scope.$apply(function () {
+                    task.date.setDate(task.date.getDate() + 1);
+                  });
+                  $app.swipeoutClose($app.swipeoutOpenedEl);
                 }
               }
             ],
@@ -77,24 +85,14 @@ angular.module('app.tasks', ['app.pouchdb'])
             [
               {
                 text: 'Cancel',
-                bold: true
+                bold: true,
+                onClick: function () {
+                  $app.swipeoutClose($app.swipeoutOpenedEl);
+                }
               }
             ]
           ]);
         }
-      };
-
-      $scope.create = function () {
-        var record = $db.record;
-
-        $db.create(record)
-            .then(function (record) {
-              $scope.tasks.unshift(record);
-            })
-            .
-            catch(function (error) {
-              console.log('Error (' + error.name + ') : ' + error.message);
-            });
       };
 
       $scope.remove = function (task) {
@@ -116,6 +114,7 @@ angular.module('app.tasks', ['app.pouchdb'])
       };
 
       $scope.populate = function () {
+        console.log('Populating');
         return $db.clean()
             .then(function () {
               return $db.populate();
@@ -128,32 +127,40 @@ angular.module('app.tasks', ['app.pouchdb'])
             });
       };
 
-      // UI actions event handling
+      $scope.refresh = $scope.populate;
 
-      $scope.$on('addItem', $scope.create);
+      $scope.$on('changeOrder', function(event, value){
+        $scope.changeOrder(value);
+      });
 
-      $scope.$on('populateDatabase', $scope.populate);
-
-      $scope.$on('changeOrder', function (value) {
+      $scope.changeOrder = function (value) {
         $scope.order = value;
 
-        if ($scope.order && $scope.order.contains('date') || $scope.order.contains('priority')) {
+        if ($scope.order && $scope.order.indexOf('date') >= 0 || $scope.order.indexOf('priority') >= 0) {
           $scope.group = $scope.order.substr(1);
         } else {
           $scope.group = null;
         }
-      });
+      };
 
-      $scope.$on('changePeriod', function setFilter(value) {
-        $scope.period = value;
-      });
+      $scope.changePeriod = function (index) {
+        $scope.period = ['today', 'week', 'all'][index];
+      };
+
 
       $scope.init();
     })
 
     .controller('TaskFormController', function ($scope, $db, $app, $navigator, $dictionary) {
 
-      $scope.formData = angular.copy($scope.task);
+      $scope.nameOfScope = 'TaskFormController';
+      $scope.isNew = $scope.task === undefined;
+
+      if (!$scope.isNew) {
+        $scope.formData = angular.copy($scope.task);
+      } else {
+        $scope.formData = angular.copy($db.record);
+      }
 
       $scope.remove = function (task) {
         $app.confirm('TaskFormController', 'Delete task?', function () {
@@ -168,14 +175,31 @@ angular.module('app.tasks', ['app.pouchdb'])
       };
 
       $scope.update = function () {
-        console.log('scope', $scope.$id);
-        angular.copy($scope.formData, $scope.task);
+        if ($scope.taskForm.$invalid) {
+          $app.alert('Please provide name for task', 'Task definition incomplete');
+          return;
+        }
+
+        if ($scope.isNew) {
+          $db.create($scope.formData)
+              .then(function (result) {
+                $scope.tasks.push(result);
+              })
+              .catch(function (error) {
+                console.log('Error (' + error.name + ') : ' + error.message);
+              });
+        } else {
+          $db.update($scope.formData)
+              .then(function (result) {
+                angular.copy($scope.formData, $scope.task);
+              })
+              .catch(function (error) {
+                console.log('Error (' + error.name + ') : ' + error.message);
+              });
+
+        }
         $navigator.goBack();
 
-        $db.update($scope.task)
-            .catch(function (error) {
-              console.log('Error (' + error.name + ') : ' + error.message);
-            });
       };
 
       $scope.priorities = $dictionary.priorities;
