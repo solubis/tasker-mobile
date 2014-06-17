@@ -51,3 +51,7 @@ i.icon-plus {
 .buttons-row {
     width: 220px;
 }
+
+.popup {
+    background-color: lightgrey;
+}

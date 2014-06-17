@@ -13,9 +13,7 @@ module.exports = function (config) {
       'lib/angular-mocks/angular-mocks.js',
       'lib/pouchdb/dist/pouchdb-nightly.js',
       'lib/chance/chance.js',
-      'lib/ionic/release/js/ionic.js',
-      'lib/ionic/release/js/ionic-angular.js',
-      'ionic/js/**/*.js',
+      'common/lib/everlive.all.min.js',
       'common/js/**/*.js',
 
       'test/unit/**/*-spec.js'

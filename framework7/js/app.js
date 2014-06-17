@@ -2,7 +2,7 @@ angular.module('app', [
   'app.tasks',
   'app.filters',
   'app.services',
-  'app.pouchdb',
+  'app.everlive',
   'framework7'
 ])
     .config(function ($navigatorProvider) {
@@ -11,55 +11,20 @@ angular.module('app', [
       });
     })
 
-    .factory('$db', function ($q, Database) {
-      var $db = new Database('tasks');
+    .controller('AppController', function ($scope, $app, $account) {
+      $scope.credentials = {};
 
-      $db.populate = function () {
-        var i,
-            tasks = [
-              'Opis scope i transclude',
-              'Przywieźć drążek do podciągania z garażu',
-              'Responsive tasker - Bootstrap, Everlive, Firebase'
-            ],
-            promises = [],
-            today = new Date();
-
-        for (i = 0; i < 20; i++) {
-
-          var promise = this.create({
-            name: i + ' - ' + chance.pick(tasks),
-            date: chance.date({
-              year: 2014,
-              month: today.getMonth(),
-              hour: 0,
-              minute: 0,
-              second: 0,
-              millisecond: 0,
-              string: false,
-              american: false
-            }),
-            priority: chance.integer({
-              min: 0,
-              max: 2
-            }),
-            description: chance.sentence({words: 10}),
-            completed: chance.bool()
-          });
-
-          promises.push(promise);
-        }
-
-        return $q.all(promises);
+      $scope.openLoginForm = function () {
+        $app.popup('#login-form', true);
       };
 
-      $db.record = {
-        name: 'New task',
-        date: new Date(),
-        priority: 0,
-        description: '',
-        completed: false
+      $scope.signUp = function () {
+        $account.signUp($scope.credentials.email, $scope.credentials.email, $scope.credentials.password);
       };
 
-      return $db;
+      $scope.login = function () {
+        $account.login($scope.credentials.email, $scope.credentials.password);
+      };
+
     });
 

@@ -1,0 +1,25 @@
+{
+  "name": "my-first-hoodie",
+  "version": "1.0.21",
+  "type": "app",
+  "dependencies": {
+    "hoodie-server": "^0.9.28",
+    "hoodie-plugin-appconfig": "^0.1.4",
+    "hoodie-plugin-email": "^0.1.5",
+    "hoodie-plugin-users": "^0.1.1"
+  },
+  "files": ["www/"],
+  "engines": {
+    "node": ">=0.10.22"
+  },
+  "scripts": {
+    "start": "node node_modules/hoodie-server/bin/start"
+  },
+  "hoodie": {
+    "plugins": [
+      "hoodie-plugin-appconfig",
+      "hoodie-plugin-email",
+      "hoodie-plugin-users"
+    ]
+  }
+}

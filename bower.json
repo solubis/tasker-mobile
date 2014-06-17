@@ -6,7 +6,7 @@
     "angular": "~1.3",
     "chance": "*",
     "pouchdb": "*",
-    "q": "*",
+    "q": "1.0.1",
     "jasmine": "*",
     "onsenui": "*",
     "ionic": "~1.0.0",

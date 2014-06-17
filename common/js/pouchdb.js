@@ -1,13 +1,38 @@
 angular.module('app.pouchdb', [])
 
-    .factory('Database', function ($q) {
+    .factory('$utils', function ($q, $rootScope) {
+      return {
+        to$q: function (promise) {
+          var deferred = $q.defer();
+
+          promise.then(function (result) {
+            deferred.resolve(result);
+            $rootScope.$digest();
+          });
+
+          promise.catch(function (error) {
+            deferred.reject(error);
+            $rootScope.$digest();
+          });
+
+          return deferred.promise;
+        }
+      }
+    })
+
+    .factory('Database', function ($utils) {
 
       var _db,
           _databaseName;
 
+
+      function init() {
+        _db = new PouchDB(_databaseName, {adapter: 'websql'});
+      }
+
       var Database = function (databaseName) {
         _databaseName = databaseName;
-        _db = new PouchDB(_databaseName, {adapter: 'websql'});
+        init();
       };
 
       Database.prototype.convert = function (record) {
@@ -23,10 +48,10 @@ angular.module('app.pouchdb', [])
       };
 
       Database.prototype.clean = function () {
-        return $q.when(PouchDB.destroy(_databaseName))
+        return $utils.to$q(PouchDB.destroy(_databaseName))
             .then(function () {
-              _db = new PouchDB(_databaseName, {adapter: 'websql'});
-            })
+              return init();
+            });
       };
 
       Database.prototype.all = function () {
@@ -36,7 +61,7 @@ angular.module('app.pouchdb', [])
           include_docs: true
         };
 
-        return $q.when(_db.allDocs(options))
+        return $utils.to$q(_db.allDocs(options))
             .then(function (result) {
               var converted;
 
@@ -49,33 +74,36 @@ angular.module('app.pouchdb', [])
       };
 
       Database.prototype.get = function (obj) {
-        var me = this;
-        var _id = (typeof obj === 'object' ? obj.id : obj);
+        var me = this,
+            _id = (typeof obj === 'object' ? obj._id : obj);
 
-        return $q.when(_db.get(_id))
+        return $utils.to$q(_db.get(_id))
             .then(function (record) {
               return me.convert(record);
             });
       };
 
+
       Database.prototype.create = function (record) {
         var me = this;
 
-        return $q.when(_db.post(record))
+        return $utils.to$q(_db.post(record))
             .then(function (result) {
               return me.get(result.id);
             });
       };
 
+
       Database.prototype.update = function (record) {
-        return $q.when(_db.put(record))
+        return $utils.to$q(_db.put(record))
             .then(function (result) {
               record._rev = result.rev;
+              return record;
             });
       };
 
       Database.prototype.remove = function (record) {
-        return $q.when(_db.remove(record));
+        return $utils.to$q(_db.remove(record));
       };
 
       return Database;

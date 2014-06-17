@@ -5,7 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>My App</title>
 
@@ -30,7 +30,7 @@
   <link href="../common/img/icon-57.png" sizes="57x57" rel="apple-touch-icon">
 </head>
 
-<body>
+<body ng-controller="AppController">
 
 <!--------------------  Status Bar Overlay  -------------------->
 
@@ -77,10 +77,65 @@
           </div>
         </a>
       </li>
+      <li>
+        <a href="#" class="close-panel link" ng-click="openLoginForm()">
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-title ">Login</div>
+            </div>
+          </div>
+        </a>
+      </li>
     </ul>
   </div>
   <div class="content-block">
     <p>Long text block goes here. Lorem ipsum dolor sit amet. </p>
+  </div>
+
+</div>
+
+
+<!--------------------  Login modal  -------------------->
+
+<div id="login-form" class="popup">
+
+  <div class="content-block">
+    <div class="content-block-title">Just inputs</div>
+  </div>
+
+  <div class="list-block inset">
+    <ul>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-email"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">E-mail</div>
+            <div class="item-input">
+              <input type="email" placeholder="E-mail" ng-model="credentials.email">
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Password</div>
+            <div class="item-input">
+              <input type="password" placeholder="Password" ng-model="credentials.password">
+            </div>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <div class="content-block ">
+    <a ng-hide="isSignup" href="#" ng-click="login()" class="button button-big button-cancel ">Login</a>
+    <a ng-show="isSignup" href="#" ng-click="signUp()" class="button button-big button-cancel ">Sign Up</a>
+    <div class="center">If you don't have an account - please <a href="#" class="link" ng-click="isSignup=true">Sign Up</a></div>
   </div>
 
 </div>
@@ -185,7 +240,6 @@
         </div>
 
 
-
       </div>
     </div>
 
@@ -223,7 +277,8 @@
       <ul>
         <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+name')">Sort by name</a></li>
         <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+date')">Sort by date</a></li>
-        <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+priority')">Sort by priority</a></li>
+        <li><a href="#" class="list-button item-link" ng-click="$broadcast('changeOrder','+priority')">Sort by
+          priority</a></li>
         <li></li>
       </ul>
     </div>
@@ -232,14 +287,18 @@
 
 <!--------------------  Scripts  -------------------->
 
+
 <script src="../lib/angular/angular.js"></script>
 <script src="../lib/angular-ui-router/release/angular-ui-router.js"></script>
 <script src="../lib/chance/chance.js"></script>
+
 <script src="../lib/pouchdb/dist/pouchdb-nightly.js"></script>
+<script src="../common/lib/everlive.all.min.js"></script>
 
 <script src="../common/js/filters.js"></script>
 <script src="../common/js/pouchdb.js"></script>
 <script src="../common/js/services.js"></script>
+<script src="../common/js/everlive.js"></script>
 
 <script src="../lib/framework7/dist/js/framework7.js"></script>
 <script src="js/framework7-ext.js"></script>
