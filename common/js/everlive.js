@@ -9,7 +9,7 @@ angular.module('app.everlive', [])
                 deferred.resolve(result);
                 $rootScope.$digest();
               }
-              , function (error) {
+              ,function (error) {
                 deferred.reject(error);
                 $rootScope.$digest();
               });
@@ -19,88 +19,106 @@ angular.module('app.everlive', [])
       }
     })
 
-    .factory('$everlive', function () {
-      return new Everlive({
+    .factory('$everlive', function ($window) {
+      var everlive, account = JSON.parse($window.localStorage.getItem('userProfile')) || {};
+
+      everlive =  new Everlive({
         apiKey: 'QSyWwy2GY5YJ9KdV',
-        token: localStorage.getItem("token")
+        token: account.token
       });
+
+      return everlive;
     })
 
-    .factory('$account', function ($rootScope, $everlive, $utils) {
+    .factory('$account', function ($rootScope, $everlive, $utils, $window) {
 
-      var account = {};
+      var account = {},
+          user = {};
+
+      function clearUserProfile() {
+        user.id = undefined;
+        user.token = undefined;
+        account.setUserInStore(user);
+      }
 
       account.logout = function () {
-        return $utils.to$q($everlive.Users.logout())
-            .then(function () {
-              $rootScope.user = null;
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
-            });
+        clearUserProfile();
+
+        $rootScope.$broadcast('loggedOut');
+
+        return $utils.to$q($everlive.Users.logout());
       };
 
-      account.loadProfile = function () {
-        return $utils.to$q($everlive.Users.currentUser())
-            .then(function (data) {
-              console.log(JSON.stringify(data));
-              $rootScope.user = {
-                name: data.result.DisplayName
-              };
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
-            });
+      account.getUserFromStore = function () {
+        return JSON.parse($window.localStorage.getItem('userProfile')) || {};
+      };
+
+      account.getUser = function () {
+        return user;
+      };
+
+      account.setUserInStore = function(user){
+        $window.localStorage.setItem('userProfile', JSON.stringify(user));
       };
 
       account.login = function (email, password) {
         return $utils.to$q($everlive.Users.login(email, password))
             .then(function (data) {
-              localStorage.setItem("token", data.result['access_token']);
-              account.loadProfile();
+              user.token = data.result['access_token'];
+              user.id = data.result['principal_id'];
+
+              return $utils.to$q($everlive.Users.currentUser());
             })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
+            .then(function (data) {
+              user.name = data.result.DisplayName;
+              user.email = data.result.Username;
+
+              account.setUserInStore(user);
+
+              $rootScope.$broadcast('loggedIn');
+
+              return user;
             });
       };
 
-      account.signUp = function (name, email, password) {
-        var user = {
+      account.signUp = function (email, password) {
+        var profile = {
           Email: email,
-          DisplayName: name,
+          DisplayName: email,
           Role: 'authors'
         };
 
-        return $utils.to$q($everlive.Users.register(email, password, user))
+        return $utils.to$q($everlive.Users.register(email, password, profile));
+      };
+
+      account.remove = function () {
+        return $utils.to$q($everlive.Users.destroySingle({Id: user.id}))
             .then(function () {
-              account.login(email, password);
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
+              clearUserProfile();
             });
       };
 
       account.isLoggedIn = function () {
-        return $rootScope.user;
+        return user && user.id;
       };
 
-      account.loadProfile();
+      user = account.getUserFromStore();
 
       return account;
     })
 
-    .factory('Database', function ($q, $everlive, $utils) {
+    .factory('Store', function ($q, $everlive, $utils) {
 
-      var Database = function (typeName) {
+      var Store = function (typeName) {
         this.type = $everlive.data(typeName);
       };
 
-      Database.prototype.convert = function (record) {
+      Store.prototype.convert = function (record) {
         record._id = record.Id;
         return record;
       };
 
-      Database.prototype.all = function () {
+      Store.prototype.all = function () {
         var me = this;
 
         return $utils.to$q(this.type.get())
@@ -112,66 +130,44 @@ angular.module('app.everlive', [])
               });
 
               return converted;
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
             });
       };
 
-      Database.prototype.get = function (obj) {
+      Store.prototype.get = function (obj) {
         var me = this,
             _id = (typeof obj === 'object' ? obj._id : obj);
 
         return $utils.to$q(this.type.getById(_id))
             .then(function (data) {
               return me.convert(data.result);
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
             });
       };
 
-      Database.prototype.create = function (record) {
+      Store.prototype.create = function (record) {
         var me = this;
 
         return $utils.to$q(this.type.create(record))
             .then(function (data) {
               return me.get(data.result.Id);
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
             });
       };
 
-      Database.prototype.update = function (record) {
+      Store.prototype.update = function (record) {
         return $utils.to$q(this.type.updateSingle(record))
             .then(function (data) {
               return record;
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
             });
       };
 
-      Database.prototype.remove = function (record) {
-        return $utils.to$q(this.type.destroySingle({ Id: record._id }))
-            .then(function (result) {
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
-            });
+      Store.prototype.remove = function (record) {
+        return $utils.to$q(this.type.destroySingle({ Id: record._id }));
       };
 
-      Database.prototype.clean = function (record) {
-        return $utils.to$q(this.type.destroy())
-            .then(function (result) {
-            })
-            .catch(function (error) {
-              console.log(JSON.stringify(error));
-            });
+      Store.prototype.clean = function (record) {
+        return $utils.to$q(this.type.destroy());
       };
 
-      return Database;
+      return Store;
 
     });
 

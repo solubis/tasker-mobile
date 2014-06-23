@@ -20,7 +20,7 @@ angular.module('app.pouchdb', [])
       }
     })
 
-    .factory('Database', function ($utils) {
+    .factory('Store', function ($utils) {
 
       var _db,
           _databaseName;
@@ -30,12 +30,12 @@ angular.module('app.pouchdb', [])
         _db = new PouchDB(_databaseName, {adapter: 'websql'});
       }
 
-      var Database = function (databaseName) {
+      var Store = function (databaseName) {
         _databaseName = databaseName;
         init();
       };
 
-      Database.prototype.convert = function (record) {
+      Store.prototype.convert = function (record) {
         for (var field in record) {
           if (record.hasOwnProperty(field)
               && field.toLowerCase().indexOf('date') >= 0
@@ -47,14 +47,14 @@ angular.module('app.pouchdb', [])
         return record;
       };
 
-      Database.prototype.clean = function () {
+      Store.prototype.clean = function () {
         return $utils.to$q(PouchDB.destroy(_databaseName))
             .then(function () {
               return init();
             });
       };
 
-      Database.prototype.all = function () {
+      Store.prototype.all = function () {
         var me = this;
 
         var options = {
@@ -73,7 +73,7 @@ angular.module('app.pouchdb', [])
             });
       };
 
-      Database.prototype.get = function (obj) {
+      Store.prototype.get = function (obj) {
         var me = this,
             _id = (typeof obj === 'object' ? obj._id : obj);
 
@@ -84,7 +84,7 @@ angular.module('app.pouchdb', [])
       };
 
 
-      Database.prototype.create = function (record) {
+      Store.prototype.create = function (record) {
         var me = this;
 
         return $utils.to$q(_db.post(record))
@@ -94,7 +94,7 @@ angular.module('app.pouchdb', [])
       };
 
 
-      Database.prototype.update = function (record) {
+      Store.prototype.update = function (record) {
         return $utils.to$q(_db.put(record))
             .then(function (result) {
               record._rev = result.rev;
@@ -102,9 +102,9 @@ angular.module('app.pouchdb', [])
             });
       };
 
-      Database.prototype.remove = function (record) {
+      Store.prototype.remove = function (record) {
         return $utils.to$q(_db.remove(record));
       };
 
-      return Database;
+      return Store;
     });

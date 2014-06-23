@@ -1,10 +1,10 @@
-describe('PouchDB', function () {
+xdescribe('Store', function () {
   var $scope, $db, $q, $rootScope;
 
   beforeEach(module('app.everlive'));
-  beforeEach(inject(function ($compile, _$rootScope_, _$q_, Database) {
+  beforeEach(inject(function ($compile, _$rootScope_, _$q_, Store) {
     $rootScope = _$rootScope_;
-    $db = new Database('test');
+    $db = new Store('test');
     $q = _$q_;
   }));
 

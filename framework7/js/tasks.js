@@ -1,6 +1,6 @@
 angular.module('app.tasks', ['app.pouchdb'])
 
-    .controller('TaskListController', function ($scope, $filter, $db, $app, $timeout) {
+    .controller('TaskListController', function ($scope, $filter, $db, $app, $timeout, $account) {
 
       $scope.nameOfScope = 'TaskListController';
 
@@ -12,13 +12,23 @@ angular.module('app.tasks', ['app.pouchdb'])
 
       $scope.init = function () {
         console.log('TaskListController Initializing...');
+
+        if (!$account.isLoggedIn()){
+          return;
+        }
+
+        $app.showIndicator();
+
         $db.all()
             .then(function (result) {
               $scope.tasks = result;
             })
-            .
-            catch(function (error) {
-              console.log('Error (' + error.name + ') : ' + error.message);
+            .catch(function (error) {
+              console.log('Error : ' + error.message);
+              $app.alert(error.message);
+            })
+            .finally(function () {
+              $app.hideIndicator();
             });
       };
 
@@ -118,10 +128,6 @@ angular.module('app.tasks', ['app.pouchdb'])
 
       $scope.refresh = $scope.populate;
 
-      $scope.$on('changeOrder', function (event, value) {
-        $scope.changeOrder(value);
-      });
-
       $scope.changeOrder = function (value) {
         $scope.order = value;
 
@@ -131,6 +137,14 @@ angular.module('app.tasks', ['app.pouchdb'])
           $scope.group = null;
         }
       };
+
+      $scope.$on('loggedOut', function () {
+        $scope.tasks = [];
+      });
+
+      $scope.$on('loggedIn', function () {
+        $scope.init();
+      });
 
       $scope.changePeriod = function (index) {
         $scope.period = ['today', 'week', 'all'][index];
@@ -175,7 +189,8 @@ angular.module('app.tasks', ['app.pouchdb'])
                 $scope.tasks.push(result);
               })
               .catch(function (error) {
-                console.log('Error (' + error.name + ') : ' + error.message);
+                console.log('Error : ' + error.message);
+                $app.alert(error.message);
               });
         } else {
           $db.update($scope.formData)
@@ -183,7 +198,8 @@ angular.module('app.tasks', ['app.pouchdb'])
                 angular.copy($scope.formData, $scope.task);
               })
               .catch(function (error) {
-                console.log('Error (' + error.name + ') : ' + error.message);
+                console.log('Error : ' + error.message);
+                $app.alert(error.message);
               });
 
         }
@@ -195,8 +211,8 @@ angular.module('app.tasks', ['app.pouchdb'])
 
     })
 
-    .factory('$db', function ($q, Database) {
-      var $db = new Database('tasks');
+    .factory('$db', function ($q, Store) {
+      var $db = new Store('tasks');
 
       $db.populate = function () {
         var i,

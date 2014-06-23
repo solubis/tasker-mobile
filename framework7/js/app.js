@@ -11,20 +11,88 @@ angular.module('app', [
       });
     })
 
-    .controller('AppController', function ($scope, $app, $account) {
-      $scope.credentials = {};
+    .controller('AppController', function ($scope, $app, $account, $everlive) {
+
+      console.log('AppController starting');
+
+      $scope.credentials = $account.getUser();
 
       $scope.openLoginForm = function () {
         $app.popup('#login-form', true);
       };
 
       $scope.signUp = function () {
-        $account.signUp($scope.credentials.email, $scope.credentials.email, $scope.credentials.password);
+        $app.showIndicator();
+        $account.signUp($scope.credentials.email, $scope.credentials.password)
+            .then(function () {
+              $app.closeModal('#login-form');
+              $account.login($scope.credentials.email, $scope.credentials.password);
+            })
+            .catch(function (error) {
+              $app.alert(error.message, 'Signup error');
+            })
+            .finally(function(){
+              $app.hideIndicator();
+            });
       };
 
       $scope.login = function () {
-        $account.login($scope.credentials.email, $scope.credentials.password);
+        $app.showIndicator();
+        $account.login($scope.credentials.email, $scope.credentials.password)
+            .then(function () {
+              $app.closeModal('#login-form');
+            })
+            .catch(function (error) {
+              $app.alert(error.message, 'Login error');
+            })
+            .finally(function(){
+              $app.hideIndicator();
+            });
+
       };
 
+      $scope.logout = function () {
+        $app.confirm('Are you sure you want to log out?', 'Logout', function () {
+          $app.showIndicator();
+          $account.logout()
+              .then(function () {
+                $scope.openLoginForm();
+              })
+              .catch(function (error) {
+                $app.alert(error.message, 'Logout error');
+              })
+              .finally(function(){
+                $app.hideIndicator();
+              });
+        });
+      };
+
+      $scope.setLoginForm = function(){
+        $scope.isLoginForm = true;
+        $scope.isSignupForm = false;
+      };
+
+      $scope.setSignupForm = function(){
+        $scope.isLoginForm = false;
+        $scope.isSignupForm = true;
+      };
+
+      $scope.$on('loadingData', function () {
+        $app.showIndicator();
+      });
+
+      $scope.$on('finishedLoadingData', function () {
+        $app.hideIndicator();
+      });
+
+      $scope.isLoggedIn = $account.isLoggedIn;
+      $scope.user = $account.getUser();
+      $scope.everlive = $everlive;
+
+      $scope.setLoginForm();
+
+      if (!$scope.isLoggedIn()){
+        $scope.openLoginForm();
+      }
     });
 

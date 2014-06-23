@@ -46,12 +46,12 @@
 
 <div class="panel panel-left panel-reveal">
 
-  <div class="content-block-title" style="color:white">Left Panel</div>
+  <div class="content-block-title" style="color:white">Menu</div>
   <div class="content-block">
     <p>This is a side panel. You can close it by clicking outsite or on this link: <a href="#" class="close-panel">close
       me</a></p>
   </div>
-  <div class="content-block-title">Framework7 Kitchen Sink</div>
+  <div class="content-block-title">Tasker navigation</div>
   <div class="list-block">
     <ul>
       <li>
@@ -78,10 +78,20 @@
         </a>
       </li>
       <li>
-        <a href="#" class="close-panel link" ng-click="openLoginForm()">
+        <a href="#" ng-if="!isLoggedIn()" class="close-panel link" ng-click="openLoginForm()">
           <div class="item-content">
+            <div class="item-media"><i class="icon icon-form-password"></i></div>
             <div class="item-inner">
               <div class="item-title ">Login</div>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" ng-if="isLoggedIn()" class="close-panel link" ng-click="logout()">
+          <div class="item-content">
+            <div class="item-media"><i class="icon icon-form-password"></i></div>
+            <div class="item-inner">
+              <div class="item-title ">Logout</div>
             </div>
           </div>
         </a>
@@ -89,7 +99,7 @@
     </ul>
   </div>
   <div class="content-block">
-    <p>Long text block goes here. Lorem ipsum dolor sit amet. </p>
+    <p ng-if="isLoggedIn()">You are logged in as: <span style="color: white">{{user.email}}</span></p>
   </div>
 
 </div>
@@ -100,16 +110,19 @@
 <div id="login-form" class="popup">
 
   <div class="content-block">
-    <div class="content-block-title">Just inputs</div>
+    <img style="margin-right: auto; margin-left: auto;display: block" src="../common/img/Icon-76.png">
   </div>
 
-  <div class="list-block inset">
+  <div class="content-block">
+    <div class="content-block-title">Login credentials</div>
+  </div>
+
+  <div class="list-block">
     <ul>
       <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-email"></i></div>
           <div class="item-inner">
-            <div class="item-title label">E-mail</div>
             <div class="item-input">
               <input type="email" placeholder="E-mail" ng-model="credentials.email">
             </div>
@@ -121,7 +134,6 @@
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-password"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Password</div>
             <div class="item-input">
               <input type="password" placeholder="Password" ng-model="credentials.password">
             </div>
@@ -132,10 +144,22 @@
     </ul>
   </div>
 
-  <div class="content-block ">
-    <a ng-hide="isSignup" href="#" ng-click="login()" class="button button-big button-cancel ">Login</a>
-    <a ng-show="isSignup" href="#" ng-click="signUp()" class="button button-big button-cancel ">Sign Up</a>
-    <div class="center">If you don't have an account - please <a href="#" class="link" ng-click="isSignup=true">Sign Up</a></div>
+  <div class="content-block" ng-if="isLoginForm">
+    <a href="#" ng-click="login()" class="button button-big active">Login</a>
+  </div>
+
+  <div class="content-block" ng-if="isLoginForm">
+    <div style="margin-right: auto; margin-left: auto;display: block; width:90%">If you don't have an account - <strong>Sign Up</strong></div>
+    <a href="#" class="button button-big button-submit" ng-click="setSignupForm()">Sign Up</a>
+  </div>
+
+  <div class="content-block row" ng-if="isSignupForm">
+    <div class="col-50">
+      <a href="#" ng-click="setLoginForm()" class="button button-big button-cancel">Cancel</a>
+    </div>
+    <div class="col-50">
+      <a href="#" ng-click="signUp()" class="button button-big button-submit">Create account</a>
+    </div>
   </div>
 
 </div>
@@ -169,7 +193,7 @@
     </div>
 
     <div class="pages navbar-through">
-      <div data-page="task-list" class="page">
+      <div data-page="task-list" class="page" ng-cloak>
 
         <div class="page-content pull-to-refresh-content">
 
@@ -178,11 +202,13 @@
             <div class="pull-to-refresh-arrow"></div>
           </div>
 
-          <div ng-show="filteredTasks.length<=0" class="content-block-title">Task list</div>
-          <div ng-show="filteredTasks.length<=0" class="content-block">
+          <div ng-show="filteredTasks.length<=0 && tasks.length>0" class="content-block" ng-cloak>
             <div class="content-block-inner">
               <p>Total elements : {{ tasks.length}}, visible elements : {{filteredTasks.length}}</p>
-
+            </div>
+          </div>
+          <div ng-show="tasks.length<=0" class="content-block" ng-cloak>
+            <div class="content-block-inner">
               <p>To populate database just swipe down to refresh list and/or change filter.</p>
             </div>
           </div>

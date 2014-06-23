@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+<script src="../lib/angular/angular.js"></script>
+<script src="../lib/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="../lib/chance/chance.js"></script>
+
+<script src="../lib/pouchdb/dist/pouchdb-nightly.js"></script>
+<script src="../common/lib/everlive.all.min.js"></script>
+
+<script src="../common/js/filters.js"></script>
+<script src="../common/js/pouchdb.js"></script>
+<script src="../common/js/services.js"></script>
+<script src="../common/js/everlive.js"></script>
+
+
+<script>
+
+  var $injector = angular.injector(['ng', 'app.everlive']);
+  var $account = $injector.get('$account');
+
+  $account.login('yoorek@gmail.com', 'tricky7111')
+      .then(function(result){
+        console.log(JSON.stringify(result));
+      })
+
+</script>
+
+</body>
+</html>
